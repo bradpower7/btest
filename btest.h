@@ -5,51 +5,55 @@
 #include <stdio.h>
 #include <vector>
 
+namespace testing {
 
-template <class Type>
-class TEST{
-	
-	public:
-	TEST(Type, Type);
-	
-	bool CHK_EQUAL();
-	
-	
-	private:
-	
-	Type checked;
-	Type expected;
-	
-	
-	
-	
-};
 
-template <class Type>
-class TEST_ENVIRON{
+	template <class Type>
+	class TEST {
 
 	public:
-	
-	TEST_ENVIRON();
-	
-	bool EQUALITY(Type test, Type expect);
-	
-	
-	
+		TEST(Type, Type);
+
+		bool CHK_EQUAL();
+
+
 	private:
-	
-	// Flags
-	bool PRINT_PASS;
-	bool PRINT_CHECK;
-	bool ADD_TESTS;
-	
-	
-	std::vector<TEST<Type>> tests;
-	
 
-	
+		Type checked;
+		Type expected;
 
-};
 
+
+
+	};
+
+	class TEST_ENVIRON {
+
+	public:
+
+		TEST_ENVIRON(bool, bool, bool);
+
+		template <class Type>
+		bool EQUALITY(Type test, Type expect);
+
+		double RESULTS();
+
+	private:
+
+		// Flags
+		bool PRINT_PASS;
+		bool PRINT_CHECK;
+		bool ADD_TESTS;
+
+		unsigned int passed;
+		unsigned int tests;
+
+
+
+
+	};
+
+
+} // testing
 
 #endif

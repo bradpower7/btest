@@ -1,53 +1,75 @@
 #include "btest.h"
 #include <iostream>
-
-// TEST
-template <typename Type>
-TEST<Type>::TEST(Type check, Type expect)
-	: checked(check), expected(expect) {
-}
-
-template <typename Type>
-bool TEST<Type>::CHK_EQUAL() {
-	if (checked == expected) { return true; }
-	else { return false; }
-}
+#include <cmath>
 
 
+namespace testing {
 
-
-// TEST_ENVIRON
-template <typename Type>
-TEST_ENVIRON<Type>::TEST_ENVIRON() {
-
-	PRINT_PASS = true;
-	PRINT_CHECK = true;
-	ADD_TESTS = true;
-
-}
-
-
-template <typename Type>
-bool TEST_ENVIRON<Type>::EQUALITY(Type test, Type expect) {
-
-	TEST<Type> newtest(test, expect);
-
-	if (PRINT_CHECK) { std::cout << "Expecting: " << expect << std::endl; 	std::cout << "Checking: " << test << std::endl;
+	// TEST
+	template <typename Type>
+	TEST<Type>::TEST(Type check, Type expect)
+		: checked(check), expected(expect) {
 	}
 
-	if (newtest.CHK_EQUAL()) {
-		if (PRINT_PASS) std::cout << "[PASS]" << std::endl;
-		if (ADD_TESTS) tests.push_back(newtest);
-		return true;
+	template <>
+	bool TEST<float>::CHK_EQUAL() {
+		if (fabs(checked - expected) < 0.001) { return true; }
+		else { return false; }
+	}
+
+	template <>
+	bool TEST<double>::CHK_EQUAL() {
+		if (fabs(checked - expected) < 0.001) { return true; }
+		else { return false; }
+	}
+
+	template <typename Type>
+	bool TEST<Type>::CHK_EQUAL() {
+		if (checked == expected) { return true; }
+		else { return false; }
+	}
+
+
+
+
+	// TEST_ENVIRON
+	TEST_ENVIRON::TEST_ENVIRON(bool pass, bool check, bool add) 
+		: PRINT_PASS(pass), PRINT_CHECK(check), ADD_TESTS(add),
+			passed(0), tests(0){
 
 	}
-	else {
 
-		if (PRINT_PASS) std::cout << "[FAIL]" << std::endl;
-		if (ADD_TESTS) tests.push_back(newtest);
-		return false;
 
+	template <typename Type>
+	bool TEST_ENVIRON::EQUALITY(Type test, Type expect) {
+
+		TEST<Type> newtest(test, expect);
+		if (ADD_TESTS) tests++;
+
+		if (PRINT_CHECK) {
+			std::cout << "Expecting: " << expect << std::endl; 	std::cout << "Checking: " << test << std::endl;
+		}
+
+		if (newtest.CHK_EQUAL()) {
+			if (PRINT_PASS) std::cout << "[PASS]" << std::endl;
+			if (ADD_TESTS) passed++;
+			return true;
+
+		}
+		else {
+
+			if (PRINT_PASS) std::cout << "[FAIL]" << std::endl;
+			return false;
+
+		}
 	}
-}
+
+	double TEST_ENVIRON::RESULTS() {
+
+		double grade = passed / tests;
+		std::cout << "Results: " << passed << "/" << tests << " tests passed. Grade: " << grade*100 << "%" << std::endl;
+		return grade;
+	}
 
 
+} //testing
